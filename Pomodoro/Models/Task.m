@@ -1,14 +1,18 @@
 //
-//  PomodoroViewController.h
+//  Task.m
 //  Pomodoro
 //
 //  Created by Sam.Xiao on 14-3-3.
 //  Copyright (c) 2014年 Sam.Xiao. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "Task.h"
 
-@interface PomodoroViewController : UIViewController
+@implementation Task
 
+- (int)time
+{
+    return 25*60;
+}
 
 @end
