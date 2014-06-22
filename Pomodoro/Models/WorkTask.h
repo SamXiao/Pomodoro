@@ -1,18 +1,13 @@
 //
-//  Task.m
+//  WorkTask.h
 //  Pomodoro
 //
-//  Created by Sam.Xiao on 14-3-3.
+//  Created by Sam.Xiao on 14-6-13.
 //  Copyright (c) 2014年 Sam.Xiao. All rights reserved.
 //
 
 #import "Task.h"
 
-@implementation Task
-
-- (int)time
-{
-    return 10;
-}
+@interface WorkTask : Task
 
 @end

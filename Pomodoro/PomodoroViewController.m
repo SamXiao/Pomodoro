@@ -7,7 +7,8 @@
 //
 
 #import "PomodoroViewController.h"
-#import "Task.h"
+#import "WorkTask.h"
+#import "RestTask.h"
 #import "Setting.h"
 
 @interface PomodoroViewController ()
@@ -18,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *buttonCancel;
 
 @property (strong, nonatomic) Task *task;
+@property (strong, nonatomic) NSString *currentTaskType;
 @property (strong, nonatomic) NSTimer *timer;
 @property (nonatomic) int secondsOfTimer;
 
@@ -37,78 +39,18 @@
 
 - (Task *)task
 {
-    if(!_task) _task = [[Task alloc]init];
+    if(!_task) {
+        if ( [self.currentTaskType isEqualToString: @"work"] ) {
+            _task = [[RestTask alloc]init];
+            self.currentTaskType = @"rest";
+        }else{
+            _task = [[WorkTask alloc]init];
+            self.currentTaskType = @"work";
+        }
+        
+    }
     return _task;
 }
-
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver: self selector:@selector(refreshView) name: UIApplicationDidBecomeActiveNotification object: nil];
-    }
-    return self;
-}
-
-#pragma mark - Event
-
-- (IBAction)onStartButtonClicked:(UIButton *)sender {
-    [self startTimerWithTimeInterval: self.task.time];
-}
-- (IBAction)onCancelButtonClicked:(UIButton *)sender {
-    self.settings.endDate = nil;
-    [self stopTimer];
-}
-
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-    
-}
-
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [self refreshView];
-    if ( [self.settings.bgMode isEqual: @"black"] ) {
-        self.view.backgroundColor = [UIColor blackColor];
-        self.labelTimer.textColor = [UIColor lightGrayColor];
-        self.buttonCancel.titleLabel.textColor = [UIColor lightGrayColor];
-        self.buttonStart.titleLabel.textColor = [UIColor lightGrayColor];
-    }else{
-        self.view.backgroundColor = [UIColor whiteColor];
-        self.labelTimer.textColor = [UIColor darkTextColor];
-        self.buttonCancel.titleLabel.textColor = [UIColor darkTextColor];
-        self.buttonStart.titleLabel.textColor = [UIColor darkTextColor];
-    }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-
-
-- (void)refreshView
-{
-    [self.timer invalidate];
-    NSDate *endDate = self.settings.endDate;
-    int seconds = [endDate timeIntervalSinceNow];
-    NSLog(@"End Date is %@", endDate);
-    NSLog(@"Seconds is %d", seconds);
-    if (seconds > 0) {
-        [self startTimerWithTimeInterval: seconds];
-    }
-    
-    
-}
-
-
-#pragma mark - Timer
 
 - (void) setSecondsOfTimer:(int)timeCount
 {
@@ -119,11 +61,99 @@
     self.labelTimer.text = [NSString stringWithFormat:@"%02d:%02d", minutes, seconds];
 }
 
+- (NSString *)currentTaskType
+{
+    if (!_currentTaskType) {
+        _currentTaskType = @"rest";
+    }
+    return _currentTaskType;
+}
+
+
+#pragma mark - Event
+
+- (IBAction)onStartButtonClicked:(UIButton *)sender {
+    [self startTimerWithTimeInterval: self.task.time];
+}
+
+- (IBAction)onCancelButtonClicked:(UIButton *)sender {
+    [self cancelTimer];
+}
+
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+	// Do any additional setup after loading the view, typically from a nib.
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(refreshView:)
+                                                 name: UIApplicationDidBecomeActiveNotification
+                                               object: nil];
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    if ( [self.settings.bgMode isEqual: @"black"] ) {
+        self.labelTimer.textColor = [UIColor lightGrayColor];
+        [self.view setBackgroundColor: [UIColor blackColor]];
+        [self.buttonCancel setTitleColor: [UIColor lightGrayColor] forState: UIControlStateNormal];
+        [self.buttonStart setTitleColor: [UIColor lightGrayColor] forState: UIControlStateNormal];
+    }else{
+        self.view.backgroundColor = [UIColor whiteColor];
+        self.labelTimer.textColor = [UIColor darkTextColor];
+        [self.buttonCancel setTitleColor: [UIColor darkTextColor] forState: UIControlStateNormal];
+        [self.buttonStart setTitleColor: [UIColor darkTextColor] forState: UIControlStateNormal];
+    }
+    
+//    [self refreshView: nil];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)onTouch:(UITapGestureRecognizer *)sender {
+    if ( self.navigationController.navigationBar.hidden ) {
+        self.navigationController.navigationBar.hidden = NO;
+    }else{
+        self.navigationController.navigationBar.hidden = YES;
+    }
+}
+
+
+- (void)refreshView: (NSNotification *)notification
+{
+    [self stopTimer];
+    int seconds = [self.settings.endDate timeIntervalSinceNow];
+    NSLog(@"Seconds is %d", seconds);
+    if (seconds > 0) {
+        [self startTimerWithTimeInterval: seconds];
+    }
+}
+
+
+- (void)fireLoaclNotification
+{
+    UILocalNotification *alertLocalNotification = [[UILocalNotification alloc] init];
+    alertLocalNotification.alertBody = @"Time is up";
+    alertLocalNotification.alertAction = @"Time is up";
+    alertLocalNotification.fireDate = self.settings.endDate;
+    alertLocalNotification.soundName = UILocalNotificationDefaultSoundName;
+    [[UIApplication sharedApplication]scheduleLocalNotification: alertLocalNotification];
+}
+
+#pragma mark - Timer
+
+
+
 - (void)timerFire
 {
     self.secondsOfTimer--;
     if (self.secondsOfTimer == 0) {
-        [self stopTimer];
+        [self finishTimer];
     }
 }
 
@@ -137,24 +167,44 @@
                                                 selector: @selector(timerFire)
                                                 userInfo: nil
                                                  repeats: YES];
-    
-    
+    [self fireLoaclNotification];
     self.buttonStart.hidden = YES;
     self.buttonCancel.hidden = NO;
-    [UIApplication sharedApplication].idleTimerDisabled = YES;
 
 }
 
 - (void)stopTimer
 {
     [self.timer invalidate];
-    self.secondsOfTimer = 0;
-    
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    self.secondsOfTimer = self.task.time;
     
     self.buttonStart.hidden = NO;
     self.buttonCancel.hidden = YES;
-    [UIApplication sharedApplication].idleTimerDisabled = NO;
     
+}
+
+- (void)cancelTimer
+{
+    self.settings.endDate = nil;
+    [self stopTimer];
+}
+
+- (void)finishTimer
+{
+    self.task = nil;
+    [self stopTimer];
+    [self showFinishAlert];
+}
+
+- (void)showFinishAlert
+{
+    UIAlertView *finishAlert = [[UIAlertView alloc] initWithTitle: @"完成"
+                                                          message: @""
+                                                         delegate: nil
+                                                cancelButtonTitle: @"OK"
+                                                otherButtonTitles: nil, nil];
+    [finishAlert show];
 }
 
 @end

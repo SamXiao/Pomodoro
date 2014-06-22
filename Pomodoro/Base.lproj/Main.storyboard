@@ -16,14 +16,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rfk-aD-m8b">
-                                <rect key="frame" x="20" y="225" width="280" height="120"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rfk-aD-m8b">
+                                <rect key="frame" x="20" y="224" width="280" height="120"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="100"/>
                                 <color key="textColor" red="0.40000000596046448" green="0.40000000596046448" blue="0.40000000596046448" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rAn-eZ-JsP">
-                                <rect key="frame" x="113" y="380" width="94" height="170"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rAn-eZ-JsP">
+                                <rect key="frame" x="113" y="379" width="94" height="169"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="94" id="Usc-Xr-VyC"/>
                                 </constraints>
@@ -35,9 +35,9 @@
                                     <action selector="onStartButtonClicked:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="j9u-Xf-nUQ"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PJ3-Gt-CVn">
-                                <rect key="frame" x="113" y="380" width="94" height="170"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PJ3-Gt-CVn">
+                                <rect key="frame" x="113" y="379" width="94" height="169"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="30"/>
                                 <state key="normal" title="取消">
                                     <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
@@ -47,6 +47,7 @@
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="PJ3-Gt-CVn" firstAttribute="trailing" secondItem="rAn-eZ-JsP" secondAttribute="trailing" id="3Q6-S3-aFk"/>
                             <constraint firstItem="PJ3-Gt-CVn" firstAttribute="bottom" secondItem="rAn-eZ-JsP" secondAttribute="bottom" id="5iq-dw-aOx"/>
@@ -60,6 +61,9 @@
                             <constraint firstAttribute="trailing" secondItem="rfk-aD-m8b" secondAttribute="trailing" constant="20" symbolic="YES" id="rjz-il-YHS"/>
                             <constraint firstItem="rfk-aD-m8b" firstAttribute="centerY" secondItem="kh9-bI-dsS" secondAttribute="centerY" id="sza-EM-sOZ"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="B3h-2o-amh" appends="YES" id="IUA-Ll-KsJ"/>
+                        </connections>
                     </view>
                     <navigationItem key="navigationItem" title="我的番茄" id="3Fq-Dp-Ql9">
                         <barButtonItem key="rightBarButtonItem" title="设置" id="epE-fE-IzH">
@@ -75,6 +79,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="B3h-2o-amh">
+                    <connections>
+                        <action selector="onTouch:" destination="vXZ-lx-hvc" id="tRq-Io-aVJ"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="889" y="211"/>
         </scene>
